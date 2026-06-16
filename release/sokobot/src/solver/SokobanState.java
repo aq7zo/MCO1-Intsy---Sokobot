@@ -1,6 +1,8 @@
 package solver;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -13,7 +15,7 @@ public class SokobanState {
     public SokobanState(int playerRow, int playerCol, Set<Pos> crates, String moves) {
         this.playerRow = playerRow;
         this.playerCol = playerCol;
-        this.crates = crates;
+        this.crates = new HashSet<>(crates);
         this.moves = moves;
     }
 
@@ -65,6 +67,7 @@ public class SokobanState {
         else if (direction == 'd') dr = 1;
         else if (direction == 'l') dc = -1;
         else if (direction == 'r') dc = 1;
+        else return null;
 
         int nextR = playerRow + dr;
         int nextC = playerCol + dc;
@@ -94,6 +97,20 @@ public class SokobanState {
             // Normal move
             return new SokobanState(nextR, nextC, crates, moves + direction);
         }
+    }
+
+    public List<SokobanState> getPossibleMoves(int width, int height, char[][] mapData) {
+        List<SokobanState> possibleMoves = new ArrayList<>();
+        char[] directions = {'u', 'd', 'l', 'r'};
+
+        for (char direction : directions) {
+            SokobanState nextState = move(direction, width, height, mapData);
+            if (nextState != null) {
+                possibleMoves.add(nextState);
+            }
+        }
+
+        return possibleMoves;
     }
 
     public boolean isGoal(Set<Pos> targets) {
